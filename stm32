@@ -1,0 +1,37 @@
+#include <Wire.h>
+#include <BMP180.h>
+#include "STM32LowPower.h"
+
+BMP180 myBMP(BMP180_ULTRHIGHRES);
+
+void setup()
+{
+Serial.begin(115200);
+LowPower.begin();
+while (myBMP.begin() != true)
+{
+Serial.println("BMP180 is not connected.");
+delay(5000);
+}
+Serial.println("BMP180 is OK");
+}
+void loop()
+{
+int i,a=0,b=0,x=0,y=0;
+Serial.print("Temp:");
+Serial.println(myBMP.getTemperature());
+Serial.print("Pressure:");
+Serial.println(myBMP.getPressure());
+for(i=0;i<100;i++)
+{
+a=myBMP.getTemperature()+a;
+b=myBMP.getPressure()+b;
+}
+x=a/100;
+y=b/100;
+Serial.print("avg of 100 temp sample=");
+Serial.println(x);
+Serial.print("avg of 100 pressure sample=");
+Serial.println(y);
+LowPower.deepsleep(100);
+}
